@@ -1,3 +1,4 @@
+import bind from "bind-decorator";
 import { Vector } from "./vector";
 
 export class Matrix {
@@ -5,12 +6,14 @@ export class Matrix {
     // >>>>>>>>>>>>>>>>>>>>>>
     // >> Static methods
 
-    public static fromArray(array: number[]): Matrix {
+    public static fromArray(array: number[][]): Matrix {
         const rows = array.length;
-        const cols = 1;
+        const cols = array[0].length;
         const matrix = new Matrix(rows, cols);
         for (let i = 0; i < rows; i++) {
-            matrix.set(i, 0, array[i]);
+            for (let j = 0; j < cols; j++) {
+                matrix.set(i, j, array[i][j]);
+            }
         }
         return matrix;
     }
@@ -32,12 +35,12 @@ export class Matrix {
 
     public readonly rows_: number;
     public readonly cols_: number;
-    public values_: number[];
+    public values_: Float64Array[];
 
     constructor(rows: number, cols: number) {
         this.rows_   = rows;
         this.cols_   = cols;
-        this.values_ = new Array(rows * cols).fill(0);
+        this.values_ = Array.from({ length: rows }, () => new Float64Array(cols));
     }
     // <<<<<<<<<<<<<<<<<<<<<<
 
@@ -45,29 +48,28 @@ export class Matrix {
     // >>>>>>>>>>>>>>>>>>>>>>
     // >> Instance methods
 
+    @bind
     public toArray(): number[][] {
-        const array: number[][] = [];
-        
-        for (let i = 0; i < this.rows_; i++) {
-            const col = new Array(this.cols_);
-            for (let j = 0; j < this.cols_; j++) {
-                col.push(this.get(i, j));
-            }
-            array.push(col);
-        }
-
-        return array;
+        return this.values_.map(row => Array.from(row));
     }
 
+    @bind
+    public sum (): number {
+        return this.values_.reduce((acc, row) => acc + row.reduce((a, b) => a + b, 0), 0);
+    }
+
+    @bind
     public get(row: number, col: number): number {
-        return this.values_[row * this.cols_ + col];
+        return this.values_[row][col];
     }
 
+    @bind
     public set(row: number, col: number, value: number): void {
-        this.values_[row * this.cols_ + col] = value;
+        this.values_[row][col] = value;
     }
 
-    public randomize(): void {
+    @bind
+    public rand(): void {
         for (let i = 0; i < this.rows_; i++) {
             for (let j = 0; j < this.cols_; j++) {
                 this.set(i, j, Math.random() * 2 - 1);
@@ -75,6 +77,7 @@ export class Matrix {
         }
     }
 
+    @bind
     public add (other: Matrix) {
         const matrix = new Matrix(this.rows_, this.cols_);
         for (let i = 0; i < this.rows_; i++) {
@@ -85,12 +88,12 @@ export class Matrix {
         return matrix;
     }
 
-
+    @bind
     public sub (scalar: number) {
         return this.mul(-scalar);
     }
 
- 
+    @bind
     public mul (scalar: number) {
         const matrix = new Matrix(this.rows_, this.cols_);
         for (let i = 0; i < this.rows_; i++) {
@@ -101,8 +104,7 @@ export class Matrix {
         return matrix;
     }
 
-
-
+    @bind
     public dot (other: Vector): Vector {
         const vector = new Vector(this.rows_);
         for (let i = 0; i < this.rows_; i++) {
@@ -115,6 +117,22 @@ export class Matrix {
         return vector
     }
 
+    @bind
+    public inner (other: Matrix): Matrix {
+        const matrix = new Matrix(this.rows_, other.cols_);
+        for (let i = 0; i < this.rows_; i++) {
+            for (let j = 0; j < other.cols_; j++) {
+                let sum = 0;
+                for (let k = 0; k < this.cols_; k++) {
+                    sum += this.get(i, k) * other.get(k, j);
+                }
+                matrix.set(i, j, sum);
+            }
+        }
+        return matrix;
+    }
+
+    @bind
     public T  () {
         const matrix = new Matrix(this.cols_, this.rows_);
         for (let i = 0; i < this.rows_; i++) {
@@ -124,6 +142,4 @@ export class Matrix {
         }
         return matrix;
     }
-
-
 }

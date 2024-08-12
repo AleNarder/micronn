@@ -1,3 +1,4 @@
+import bind from 'bind-decorator';
 import { Matrix } from './matrix';
 
 export class Vector{
@@ -36,14 +37,22 @@ export class Vector{
     // >>>>>>>>>>>>>>>>>>>>>>
     // >> Instance methods
 
+
     get size() {
         return this.values_.length;
     }
     
-    get(index) {
+    @bind
+    get(index: number): number {
         return this.values_[index];
     }
 
+    @bind
+    norm (): number {
+        return Math.sqrt(this.dot(this));
+    }
+
+    @bind
     max (): number {
         let max = this.get(0);
         for (let i = 1; i < this.size; i++) {
@@ -52,10 +61,12 @@ export class Vector{
         return max
     }
     
-    set(index, value): void {
+    @bind
+    set(index: number, value: number): void {
         this.values_[index] = value;
     }
 
+    @bind
     sum (): number {
         let sum = 0;
         for (let i = 0; i < this.size; i++) {
@@ -64,6 +75,7 @@ export class Vector{
         return sum;
     }
 
+    @bind
     log (): Vector {
         const vector = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
@@ -72,6 +84,7 @@ export class Vector{
         return vector;
     }
 
+    @bind
     exp (): Vector {
         const vector = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
@@ -80,14 +93,16 @@ export class Vector{
         return vector;
     }
 
+    @bind
     pow (exponent: number): Vector {
         const vector = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
-            this.set(i, Math.pow(this.get(i), exponent));
+            vector.set(i, Math.pow(this.get(i), exponent));
         }
         return vector;
     }
 
+    @bind
     T(): Vector {
         const vector = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
@@ -96,17 +111,16 @@ export class Vector{
         return vector;
     }
 
-
-    rand() {
-        const vector = new Vector(this.size);
+    @bind
+    rand(): void {
         for (let i = 0; i < this.size; i++) {
-            vector.set(i, Math.random() * 2 - 1);
+            this.set(i, Math.random() * 2 - 1);
         }
-        return vector;
     }
 
     add (other: Vector): Vector;
     add(other: number): Vector;
+    @bind
     add(other: number | Vector): Vector {
         if (other instanceof Vector) {
            return this._addVector(other);
@@ -115,6 +129,7 @@ export class Vector{
         }
     }
 
+    @bind
     private _addVector(vector: Vector): Vector {
         const result = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
@@ -123,6 +138,7 @@ export class Vector{
         return result;
     }
 
+    @bind
     private _addScalar(scalar: number): Vector {
         const result = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
@@ -134,7 +150,9 @@ export class Vector{
 
     sub(other: Vector): Vector;
     sub(other: number): Vector;
+    @bind
     sub(other: number | Vector): Vector {
+        
         if (other instanceof Vector) {
             return this._addVector(other.mul(-1));
          } else {
@@ -144,6 +162,7 @@ export class Vector{
 
     mul(other: number): Vector;
     mul(other: Vector): Vector;
+    @bind
     mul(other: Vector | number): Vector {
         if (other instanceof Vector) {
             return this._mulVector(other);
@@ -152,6 +171,7 @@ export class Vector{
         }
     }
 
+    @bind
     private _mulVector(vector: Vector): Vector {
         const result = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
@@ -160,6 +180,7 @@ export class Vector{
         return result;
     }
 
+    @bind
     private _mulScalar(scalar: number): Vector {
         const vector = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {
@@ -171,6 +192,7 @@ export class Vector{
     
     div(other: number): Vector;
     div(other: Vector): Vector;
+    @bind
     div (other: Vector | number) {
         if (other instanceof Vector) {
             return this._mulVector(other.pow(-1));
@@ -181,6 +203,7 @@ export class Vector{
     
     dot (other: Vector): number;
     dot (other: Matrix): Vector;
+    @bind
     dot (other: Matrix | Vector): Vector | number {
         if (other instanceof Matrix) {
             return this._dotMatrix(other);
@@ -189,6 +212,7 @@ export class Vector{
         }
     }
 
+    @bind
     private _dotMatrix(matrix: Matrix): Vector {
         const vector = new Vector(matrix.cols_);
         for (let i = 0; i < matrix.cols_; i++) {
@@ -201,6 +225,7 @@ export class Vector{
         return vector;
     }
     
+    @bind
     private _dotVector(vector: Vector): number {
         let sum = 0;
         for (let i = 0; i < this.size; i++) {
@@ -209,11 +234,12 @@ export class Vector{
         return sum;
     }
     
-
+    @bind
     toArray(): number[] {
         return [...this.values_]
     }
-
+    
+    @bind
     copy() {
         const vector = new Vector(this.size);
         for (let i = 0; i < this.size; i++) {

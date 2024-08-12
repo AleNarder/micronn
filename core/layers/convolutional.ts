@@ -10,5 +10,12 @@ export class Conv2D implements Layer {
     backward(outputError: Vector, lr: number): Vector {
         throw new Error("Method not implemented.");
     }
-    // TODO: Implement Conv2D layer
+
+    setLabel(label: string): void {
+        throw new Error("Method not implemented.");
+    }
+
+    getLabel(): string {
+        throw new Error("Method not implemented.");
+    }
 }

@@ -1,6 +1,6 @@
-import { Vector } from "../../lib/linalg";
+import { Matrix } from "../../lib/linalg";
 
 interface Loss {
-    forward (prediction: Vector, target: Vector): number;
-    backward (prediction: Vector, target: Vector): Vector;
+    forward (prediction: Matrix, target: Matrix): Matrix;
+    backward (prediction: Matrix, target: Matrix): Matrix;
 }

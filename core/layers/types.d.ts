@@ -1,8 +1,8 @@
-import { Vector } from "../../lib/linalg";
+import { Matrix, Vector } from "../../lib/linalg";
 
 interface Layer {
-    forward (input: Vector): Vector;
-    backward (outputError: Vector, lr: number): Vector;
+    forward (input: Matrix): Matrix;
+    backward (outputError: Matrix, lr: number): Matrix;
 
     setLabel(label: string): void;
     getLabel(): string;

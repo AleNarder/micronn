@@ -1,9 +1,5 @@
 import { Vector } from "../../lib/linalg";
-
-export interface Activation {
-    forward(input: Vector): Vector;
-    backward(input: Vector, outputGradient: Vector): Vector;
-}
+import { Activation } from "./types";
 
 /**
  * Linear activation function (identity function)
@@ -14,8 +10,9 @@ export class Linear implements Activation {
         return input;
     }
 
-    backward(input: Vector, outputGradient: Vector): Vector {
-        return outputGradient;
+    backward(input: Vector): Vector {
+        // outputGradient.mul(1)
+        return input;
     }
 }
 
@@ -34,10 +31,10 @@ export class ReLu implements Activation {
         return output;
     }
 
-    backward(input: Vector, outputGradient: Vector): Vector {
+    backward(input: Vector): Vector {
         const gradient = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
-            gradient.set(i, input.get(i) > 0 ? outputGradient.get(i) : 0);
+            gradient.set(i, input.get(i) > 0 ? input.get(i) : 0);
         }
         return gradient;
     }
@@ -58,11 +55,11 @@ export class Sigmoid implements Activation {
         return output;
     }
 
-    backward(input: Vector, outputGradient: Vector): Vector {
+    backward(input: Vector): Vector {
         const gradient = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
             const sigmoid = 1 / (1 + Math.exp(-input.get(i)));
-            gradient.set(i, sigmoid * (1 - sigmoid) * outputGradient.get(i));
+            gradient.set(i, sigmoid * (1 - sigmoid));
         }
         return gradient;
     }
@@ -82,11 +79,11 @@ export class Tanh implements Activation {
         return output;
     }
 
-    backward(input: Vector, outputGradient: Vector): Vector {
+    backward(input: Vector): Vector {
         const gradient = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
             const tanh = Math.tanh(input.get(i));
-            gradient.set(i, (1 - tanh * tanh) * outputGradient.get(i));
+            gradient.set(i, (1 - Math.pow(tanh, 2)));
         }
         return gradient;
     }
@@ -111,7 +108,7 @@ export class Softmax implements Activation {
         return output;
     }
 
-    backward(input: Vector, outputGradient: Vector): Vector {
+    backward(input: Vector): Vector {
         const gradient = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
             let sum = 0;
@@ -119,7 +116,7 @@ export class Softmax implements Activation {
                 sum += Math.exp(input.get(j));
             }
             let softmax = Math.exp(input.get(i)) / sum;
-            gradient.set(i, softmax * (1 - softmax) * outputGradient.get(i));
+            gradient.set(i, softmax * (1 - softmax));
         }
         return gradient;
     }

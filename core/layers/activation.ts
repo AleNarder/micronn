@@ -1,6 +1,7 @@
 import bind from "bind-decorator";
 import { Vector, Matrix } from "../../lib/linalg";
-import { Activation, activations } from "../activations";
+import { activations } from "../activations";
+import { Activation } from "../activations/types";
 import { Layer } from "./types";
 
 /**
@@ -8,35 +9,38 @@ import { Layer } from "./types";
  * This layer applies an activation function to the input
  */
 export class ActivationLayer implements Layer{
-    private input_!: Vector;
-    private output!: Vector;
-    private activation: Activation;
-    private label_!: string;
+    
+    public readonly activationfn_: Activation;
+    public readonly activation_: string;
+
+    private _label!: string;
+    private _input!: Matrix;
 
     constructor(activation: keyof typeof activations) {
-        this.activation = activations[activation];
+        this.activationfn_ = activations[activation];
+        this.activation_   = activation;
     }
     
     @bind
-    forward(input: Vector) {
-        this.input_ = input;
-        this.output = this.activation.forward(input);
-        console.log(this.getLabel(), "in", input.toArray(), "out", this.output.toArray());
-        return this.output;
+    forward(input: Matrix): Matrix {
+        this._input = input;
+        const out = input.apply(this.activationfn_.forward);
+        return out;
     }
     
     @bind
-    backward(outputGradient: Vector): Vector {
-        return this.activation.backward(this.input_, outputGradient);
+    backward(outputGradient: Matrix): Matrix {
+        const out = this._input.apply(this.activationfn_.backward).mul(outputGradient);
+        return out;
     }
 
     @bind
     setLabel(label: string): void {
-        this.label_ = label;
+        this._label = label;
     }
 
     @bind
     getLabel(): string {
-        return this.label_;
+        return this._label;
     }
 }

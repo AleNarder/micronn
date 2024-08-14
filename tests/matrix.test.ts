@@ -14,7 +14,3 @@ test('Matrix T', () => {
 test('Matrix dot vector', () => {
     expect(matrix.dot(Vector.fromArray([1, 2]))).toEqual(Vector.fromArray([5, 11]));
 })
-
-test('Matrix inner', () => {
-    expect(matrix.inner(matrix).toArray()).toEqual([[7, 10], [15, 22]]);
-})

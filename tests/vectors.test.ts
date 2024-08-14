@@ -3,7 +3,7 @@ import { Vector } from "../lib/linalg";
 const vector = Vector.fromArray([1, 2, 3]);
 
 test('Vector sum', () => {
-    expect(vector.sum()).toBe(6);
+    expect(vector.sum().toArray()[0]).toBe(6);
 });
 
 test('Vector log', () => {
@@ -23,9 +23,10 @@ test('Vector T', () => {
 });
 
 test('Vector rand', () => {
-    vector.rand();
-    expect(vector.size).toBe(3);
-    expect(vector.toArray()).not.toEqual([1, 2, 3]);
+    const v = vector.copy()
+    v.rand();
+    expect(v.size).toBe(3);
+    expect(v.toArray()).not.toEqual([1, 2, 3]);
 });
 
 test('Vector add scalar', () => {

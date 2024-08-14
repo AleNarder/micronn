@@ -21,6 +21,12 @@ export class Vector{
         }
         return vector;
     }
+
+    static fromScalar(scalar: number): Vector {
+        const v =  new Vector(1)
+        v.set(0, scalar);
+        return v;
+    }
     // <<<<<<<<<<<<<<<<<<<<<<
     
     // >>>>>>>>>>>>>>>>>>>>>>
@@ -29,7 +35,7 @@ export class Vector{
     readonly values_: number[];
 
     constructor(size: number) {
-        this.values_ = new Array(size);
+        this.values_ = new Array(size).fill(0);
     }
     // <<<<<<<<<<<<<<<<<<<<<<
 
@@ -67,12 +73,12 @@ export class Vector{
     }
 
     @bind
-    sum (): number {
+    sum (): Vector {
         let sum = 0;
         for (let i = 0; i < this.size; i++) {
             sum += this.get(i);
         }
-        return sum;
+        return Vector.fromArray([sum]);
     }
 
     @bind
@@ -104,11 +110,7 @@ export class Vector{
 
     @bind
     T(): Vector {
-        const vector = new Vector(this.size);
-        for (let i = 0; i < this.size; i++) {
-            vector.set(i, this.get(i));
-        }
-        return vector;
+        return this.copy();
     }
 
     @bind

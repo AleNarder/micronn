@@ -308,15 +308,14 @@ export class Matrix {
         return matrix;
     }
 
-    public flatten(): Vector {
-        const vector = new Vector(this.rows_ * this.cols_);
-        let index = 0;
+    public flatten(): Matrix {
+        const matrix = new Matrix(1, this.rows_ * this.cols_);
         for (let i = 0; i < this.rows_; i++) {
             for (let j = 0; j < this.cols_; j++) {
-                vector.set(index++, this.get(i, j));
+                matrix.set(0, i * this.cols_ + j, this.get(i, j));
             }
         }
-        return vector;
+        return matrix;
     }
 
     /**

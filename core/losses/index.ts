@@ -1,21 +1,22 @@
 
-import { Matrix, Vector } from '../../lib/linalg';
+import { Matrix } from '../../lib/linalg';
 import { Loss } from './types';
 
+const EPSILON = 1e-7;
 
 /**
  * Mean Squared Error loss function
  * @see https://en.wikipedia.org/wiki/Mean_squared_error
  */
-export class MeanSquaredError implements Loss {
-    
-    forward (yTrue: Matrix, yPred: Matrix) {
+export class MeanSquaredError extends Loss {
+
+    forward(yTrue: Matrix, yPred: Matrix) {
         return yTrue
             .sub(yPred)
             .apply(x => x.pow(2).sum().div(x.size))
     }
 
-    backward (yTrue: Matrix, yPred: Matrix) {
+    backward(yTrue: Matrix, yPred: Matrix) {
         return yTrue
             .sub(yPred)
             .mul(2 / yTrue.rows_);
@@ -26,13 +27,16 @@ export class MeanSquaredError implements Loss {
  * Cross Entropy loss function
  * @see https://en.wikipedia.org/wiki/Cross_entropy
  */
-export class CrossEntropy  implements Loss {
+export class CrossEntropy extends Loss {
     forward(yTrue: Matrix, yPred: Matrix) {
+        // Avoid log(0)
+        const yPredClipped = yPred.apply(x => x.apply((x) => Math.max(x, EPSILON)));
         return yTrue
-            .mul(yPred.apply(x => x.log()))
+            .mul(yPredClipped.apply(x => x.log()))
             .apply(x => x.sum())
-            .mul(-1 / yTrue.cols_);
+            .mul(-1 / yTrue.rows_);
     }
+
     backward(yTrue: Matrix, yPred: Matrix) {
         return yTrue
             .div(yPred)
@@ -44,14 +48,16 @@ export class CrossEntropy  implements Loss {
  * Binary Cross Entropy loss function
  * @see https://en.wikipedia.org/wiki/Cross_entropy
  */
-export class BinaryCrossEntropy implements Loss  {
+export class BinaryCrossEntropy extends Loss {
     forward(yTrue: Matrix, yPred: Matrix) {
+        // Avoid log(0)
+        const yPredClipped = yPred.apply(x => x.apply((x) => Math.max(x, EPSILON)));
         return yTrue
-            .mul(yPred.apply(x => x.log()))
+            .mul(yPredClipped.apply(x => x.log()))
             .add(yTrue
                 .sub(1)
                 .mul(yPred.sub(1).apply(x => x.log())
-            ))
+                ))
             .apply(x => x.sum())
             .mul(-1 / yTrue.cols_);
     }

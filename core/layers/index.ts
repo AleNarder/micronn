@@ -1,3 +1,3 @@
 export * from './activation'
-export * from './convolutional'
+export * from './flatten'
 export * from './dense'

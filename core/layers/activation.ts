@@ -1,5 +1,5 @@
 import bind from "bind-decorator";
-import { Vector, Matrix } from "../../lib/linalg";
+import { Matrix } from "../../lib/linalg";
 import { activations } from "../activations";
 import { Activation } from "../activations/types";
 import { Layer } from "./types";
@@ -8,7 +8,7 @@ import { Layer } from "./types";
  * Activation layer
  * This layer applies an activation function to the input
  */
-export class ActivationLayer implements Layer{
+export class ActivationLayer extends Layer{
     
     public readonly activationfn_: Activation;
     public readonly activation_: string;
@@ -17,6 +17,7 @@ export class ActivationLayer implements Layer{
     private _input!: Matrix;
 
     constructor(activation: keyof typeof activations) {
+        super();
         this.activationfn_ = activations[activation];
         this.activation_   = activation;
     }

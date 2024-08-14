@@ -5,18 +5,19 @@ import { Layer } from "./types";
 /**
  * Dense layer, aka fully connected layer
  */
-export class DenseLayer implements Layer {
+export class DenseLayer extends Layer {
     
     readonly inputSize_: number;
     readonly outputSize_: number;
 
     private _weights: Matrix;
     private _biases: Matrix;
-
     private _input!: Matrix;
-    private label_!: string;
 
-    constructor(inputSize: number, outputSize: number) {    
+    constructor(inputSize: number, outputSize: number) { 
+
+        super();
+
         this.inputSize_  = inputSize;
         this.outputSize_ = outputSize;
         
@@ -55,15 +56,5 @@ export class DenseLayer implements Layer {
     setParameters(parameters: [Matrix, Matrix]): void {
         this._weights = parameters[0];
         this._biases = parameters[1];
-    }
-
-    @bind
-    getLabel(): string {
-        return this.label_
-    }
-
-    @bind
-    setLabel(label: string): void {
-        this.label_ = label;
     }
 }

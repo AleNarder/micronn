@@ -5,7 +5,7 @@ import { Activation } from "./types";
  * Linear activation function (identity function)
  * @see https://en.wikipedia.org/wiki/Activation_function
  */
-export class Linear implements Activation {
+export class Linear extends Activation {
     forward(input: Vector): Vector {
         return input;
     }
@@ -22,7 +22,7 @@ export class Linear implements Activation {
  * otherwise, it will output zero
  * @see https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
  */
-export class ReLu implements Activation {
+export class ReLu extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
@@ -46,7 +46,7 @@ export class ReLu implements Activation {
  * the input into the range [0, 1]
  * @see https://en.wikipedia.org/wiki/Sigmoid_function
  */
-export class Sigmoid implements Activation {
+export class Sigmoid extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
@@ -70,7 +70,7 @@ export class Sigmoid implements Activation {
  * is a scaled version of the sigmoid function
  * @see https://en.wikipedia.org/wiki/Hyperbolic_function
  */
-export class Tanh implements Activation {
+export class Tanh extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
@@ -94,7 +94,7 @@ export class Tanh implements Activation {
  * and normalizes the values to sum to 1
  * @see https://en.wikipedia.org/wiki/Softmax_function
  */
-export class Softmax implements Activation {
+export class Softmax extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         let sum = 0;

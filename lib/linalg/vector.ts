@@ -235,6 +235,14 @@ export class Vector{
         }
         return sum;
     }
+
+    apply (fn: (x: number) => number): Vector {
+        const vector = new Vector(this.size);
+        for (let i = 0; i < this.size; i++) {
+            vector.set(i, fn(this.get(i)));
+        }
+        return vector;
+    }
     
     @bind
     toArray(): number[] {

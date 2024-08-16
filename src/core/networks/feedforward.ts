@@ -115,7 +115,7 @@ export class FeedForwardNetwork extends Network {
      * @param X - the input data
      * @param y - the labels
      */
-    accuracy(X: Array<Batch>, y: Array<Batch>) {
+    accuracy(X: Array<Batch>, y: Array<Batch>, tolerance: number = 0.0) {
         const Xm = X.map(x => Matrix.fromArray(x));
         const ym = y.map(y => Matrix.fromArray(y));
 
@@ -125,7 +125,7 @@ export class FeedForwardNetwork extends Network {
             const target = ym[i];
             const output = this.forward(input);
 
-            if (output.isEqual(target)) {
+            if (output.isEqual(target, tolerance)) {
                 correct++;
             }
         }

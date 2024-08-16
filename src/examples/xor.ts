@@ -14,19 +14,22 @@ const trainYs = data.map((x: any) => [[x.label]])
 
 
 const net = new FeedForwardNetwork();
-net.add(new DenseLayer(2, 7))
+net.add(new DenseLayer(2, 9))
 net.add(new ActivationLayer(
     new TanhActivation()
 ))
-net.add(new DenseLayer(7, 1))
+net.add(new DenseLayer(9, 1))
 net.add(new ActivationLayer(
     new TanhActivation()
 ))
 
 net.use('mse');
-net.fit(trainXs, trainYs, 0.1, 0.1, 350);
+net.fit(trainXs, trainYs, 0.1, 0.1, 400);
+console.log("training completed\n");
+
+
 net.predict(trainXs).forEach((x, idx) => {
     console.log(`Prediction for ${trainXs[idx]} is ${x.toArray()}`);
 });
 
-console.log("accuracy:", net.accuracy(trainXs, trainYs));
+console.log("\naccuracy:", net.accuracy(trainXs, trainYs, 0.05));

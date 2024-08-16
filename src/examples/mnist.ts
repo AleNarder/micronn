@@ -40,6 +40,6 @@ net.add(new ActivationLayer(new SoftmaxActivation()))
 net.use('mse')
 
 net.fit(trainXs, trainYs, 0.1, 0.1, 20)
-
+console.log("training completed\n")
 
 console.log("accuracy:", net.accuracy(testXs, testYs))

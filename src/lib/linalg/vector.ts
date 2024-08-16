@@ -1,4 +1,4 @@
-import bind from 'bind-decorator';
+import { bind } from "../decorators/bind";
 import { Matrix } from './matrix';
 
 export class Vector{
@@ -73,12 +73,12 @@ export class Vector{
     }
 
     @bind
-    sum (): Vector {
+    sum (): number {
         let sum = 0;
         for (let i = 0; i < this.size; i++) {
             sum += this.get(i);
         }
-        return Vector.fromArray([sum]);
+        return sum;
     }
 
     @bind
@@ -242,6 +242,10 @@ export class Vector{
             vector.set(i, fn(this.get(i)));
         }
         return vector;
+    }
+
+    clip(min: number, max: number): Vector {
+        return this.apply(x => Math.min(Math.max(x, min), max));
     }
     
     @bind

@@ -1,9 +1,9 @@
-import { Vector } from "../lib/linalg";
+import { Vector } from "../src/lib/linalg";
 
 const vector = Vector.fromArray([1, 2, 3]);
 
 test('Vector sum', () => {
-    expect(vector.sum().toArray()[0]).toBe(6);
+    expect(vector.sum()).toBe(6);
 });
 
 test('Vector log', () => {

@@ -1,9 +1,9 @@
 import { Matrix } from '../../lib/linalg';
-import { Layer } from './types';
+import { Layer } from './base';
 
 export class FlattenLayer extends Layer {
     
-    private _inputShape: [number, number];
+    private _inputShape!: [number, number];
 
     forward(input: Matrix) {
         this._inputShape = input.shape();

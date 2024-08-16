@@ -1,11 +1,11 @@
 import { Vector } from "../../lib/linalg";
-import { Activation } from "./types";
+import { Activation } from "./base";
 
 /**
  * Linear activation function (identity function)
  * @see https://en.wikipedia.org/wiki/Activation_function
  */
-export class Linear extends Activation {
+export class LinearActivation extends Activation {
     forward(input: Vector): Vector {
         return input;
     }
@@ -16,13 +16,40 @@ export class Linear extends Activation {
     }
 }
 
+// Not very useful, but it's here for completeness
+export class BinaryStepActivation extends Activation {
+
+    public threshold_: number;
+
+    constructor(threshold: number) {
+        super();
+        this.threshold_ = threshold;
+    }
+
+    forward(input: Vector): Vector {
+        const output = new Vector(input.size);
+        for (let i = 0; i < input.size; i++) {
+            output.set(i, input.get(i) > this.threshold_ ? 1 : 0);
+        }
+        return output;
+    }
+
+    backward(input: Vector): Vector {
+        const gradient = new Vector(input.size);
+        for (let i = 0; i < input.size; i++) {
+            gradient.set(i, 0);
+        }
+        return gradient;
+    }
+}
+
 /**
  * Rectified Linear Unit (ReLU) activation function
  * ReLU is a piecewise linear function that will output the input directly if it is positive, 
  * otherwise, it will output zero
  * @see https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
  */
-export class ReLu extends Activation {
+export class ReLuActivation extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
@@ -46,7 +73,7 @@ export class ReLu extends Activation {
  * the input into the range [0, 1]
  * @see https://en.wikipedia.org/wiki/Sigmoid_function
  */
-export class Sigmoid extends Activation {
+export class SigmoidActivation extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
@@ -70,7 +97,7 @@ export class Sigmoid extends Activation {
  * is a scaled version of the sigmoid function
  * @see https://en.wikipedia.org/wiki/Hyperbolic_function
  */
-export class Tanh extends Activation {
+export class TanhActivation extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
@@ -94,7 +121,7 @@ export class Tanh extends Activation {
  * and normalizes the values to sum to 1
  * @see https://en.wikipedia.org/wiki/Softmax_function
  */
-export class Softmax extends Activation {
+export class SoftmaxActivation extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
         let sum = 0;
@@ -122,11 +149,4 @@ export class Softmax extends Activation {
     }
 }
 
-// TODO: lazy load
-export const activations = {
-    linear: new Linear(),
-    relu: new ReLu(),
-    sigmoid: new Sigmoid(),
-    tanh: new Tanh(),
-    softmax: new Softmax()
-} as const;
+export * from './base';

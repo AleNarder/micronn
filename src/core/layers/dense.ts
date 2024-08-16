@@ -1,6 +1,6 @@
-import { bind } from '../../lib/classes';
+import { bind } from '../../lib/decorators/bind';
 import { Matrix } from "../../lib/linalg";
-import { Layer } from "./types";
+import { Layer } from "./base";
 
 /**
  * Dense layer, aka fully connected layer
@@ -14,17 +14,25 @@ export class DenseLayer extends Layer {
     private _biases: Matrix;
     private _input!: Matrix;
 
+    // Velocity terms for momentum
+    private _velocityWeights: Matrix;
+    private _velocityBiases: Matrix;
+
     constructor(inputSize: number, outputSize: number) { 
 
         super();
 
         this.inputSize_  = inputSize;
         this.outputSize_ = outputSize;
-        
-        this._weights    = new Matrix(inputSize, outputSize);
-        this._biases     = new Matrix(1, outputSize);
 
+        // Inialize weights terms
+        this._weights    = new Matrix(inputSize, outputSize);
+        this._velocityWeights = new Matrix(inputSize, outputSize)
         this._weights.rand();
+
+        // Initialize biases terms
+        this._biases     = new Matrix(1, outputSize);
+        this._velocityBiases  = new Matrix(1, outputSize)
         this._biases.rand();
     }
 
@@ -36,13 +44,16 @@ export class DenseLayer extends Layer {
     }
     
     @bind
-    backward(outputGradient: Matrix, lr: number): Matrix {
+    backward(outputGradient: Matrix, lr: number, momentum: number): Matrix {
         const inputGradient = outputGradient.dot(this._weights.T());
         const weightsError  = this._input.T().dot(outputGradient);
-        
-        // Update step
-        this._weights = this._weights.sub(weightsError.mul(lr));
-        this._biases  = this._biases.sub(outputGradient.mul(lr));
+
+        // Update velocity terms
+        this._velocityWeights = this._velocityWeights.mul(momentum).sub(weightsError.mul(lr));
+        this._velocityBiases  = this._velocityBiases.mul(momentum).sub(outputGradient.mul(lr));
+
+        this._weights = this._weights.add(this._velocityWeights);
+        this._biases  = this._biases.add(this._velocityBiases);
 
         return inputGradient;
     }

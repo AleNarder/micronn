@@ -1,4 +1,4 @@
-import bind from "bind-decorator";
+import { bind } from "../decorators/bind";
 import { Vector } from "./vector";
 
 export class Matrix {
@@ -149,7 +149,7 @@ export class Matrix {
     private _addMatrix(other: Matrix): Matrix {
 
         if (this.rows_ !== other.rows_ || this.cols_ !== other.cols_) {
-            throw new Error("add failed: matrix dimensions must match");
+            throw new Error("add failed: matrix dimensions must match" + this.shape() + other.shape());
         }
 
         const matrix = new Matrix(this.rows_, this.cols_);
@@ -217,7 +217,6 @@ export class Matrix {
 
             return this._mulScalar(1 / other);
         } else {
-
             if (other.values_.some(row => row.some(value => value === 0))) {
                 throw new Error("div failed: division by zero");
             }
@@ -362,6 +361,31 @@ export class Matrix {
             }
         }
         return matrix;
+    }
+
+    clip(min: number, max: number): Matrix {
+        const matrix = new Matrix(this.rows_, this.cols_);
+        for (let i = 0; i < this.rows_; i++) {
+            for (let j = 0; j < this.cols_; j++) {
+                matrix.set(i, j, Math.min(Math.max(this.get(i, j), min), max));
+            }
+        }
+        return matrix;
+    }
+
+    isEqual(other: Matrix): boolean {
+        if (this.rows_ !== other.rows_ || this.cols_ !== other.cols_) {
+            return false;
+        }
+
+        for (let i = 0; i < this.rows_; i++) {
+            for (let j = 0; j < this.cols_; j++) {
+                if (this.get(i, j) !== other.get(i, j)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     copy(): Matrix {

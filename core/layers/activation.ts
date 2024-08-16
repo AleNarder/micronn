@@ -1,4 +1,4 @@
-import bind from "bind-decorator";
+import { bind } from "../../lib/classes";
 import { Matrix } from "../../lib/linalg";
 import { activations } from "../activations";
 import { Activation } from "../activations/types";

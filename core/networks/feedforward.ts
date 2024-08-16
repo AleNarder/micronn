@@ -1,4 +1,4 @@
-import { Matrix, Vector } from "../../lib/linalg";
+import { Matrix } from "../../lib/linalg";
 import { Layer } from "../layers/types";
 import { losses } from "../losses";
 import { Loss } from "../losses/types";

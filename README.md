@@ -1,6 +1,6 @@
 # Micronn
 
-Small Typescript only Neural Networks library with zero dependencies. Requires Node.js to run, but it can run on browser with few changes
+A small TypeScript-only Neural Networks library with zero dependencies. It requires Node.js to run, but it can also run in the browser with a few modifications.
 
 ## Prerequisites
 
@@ -28,12 +28,12 @@ You need Node.js and npm installed on your computer
     **XOR**
 
     ```
-    npm run:xor
+    npm run xor
     ```
 
     **MNIST**
     ```
-    npm run:mnist
+    npm run mnist
     ```
 
 ## Roadmap

@@ -9,8 +9,8 @@
   },
   "scripts": {
     "test": "jest",
-    "run:xor": "ts-node src/examples/xor.ts",
-    "run:mnist": "ts-node src/examples/mnist.ts"
+    "xor": "ts-node src/examples/xor.ts",
+    "mnist": "ts-node src/examples/mnist.ts"
   },
   "author": "Alessio Narder",
   "license": "MIT",

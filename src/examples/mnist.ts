@@ -2,10 +2,11 @@ import { SoftmaxActivation, TanhActivation } from '../core/activations';
 import { ActivationLayer, DenseLayer } from '../core/layers';
 import { FeedForwardNetwork } from '../core/networks';
 import { JSONLoader } from '../lib';
+import { resolve } from 'path';
 
 // Load the MNIST dataset
 // Slice the dataset to reduce the training time
-const data = JSONLoader.load<{ image: number[], label: number}>('../../datasets/mnist.json').slice(0, 1000)
+const data = JSONLoader.load<{ image: number[], label: number}>(resolve(__dirname, '..', '..', 'datasets', 'mnist.json')).slice(0, 1000)
 
 const SPLIT_SIZE = 0.75
 // Normalize the data

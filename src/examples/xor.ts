@@ -5,8 +5,9 @@ import { DenseLayer } from '../core/layers/dense';
 import { ActivationLayer } from '../core/layers/activation';
 import { JSONLoader } from '../lib';
 import { TanhActivation } from '../core/activations';
+import { resolve } from 'path';
 
-const data = JSONLoader.load<{ value: number[], label: number}>('../../datasets/xor.json')
+const data = JSONLoader.load<{ value: number[], label: number}>(resolve(__dirname, '..', '..', 'datasets', 'xor.json'))
 
 const trainXs = data.map((x: any) => [x.value])
 const trainYs = data.map((x: any) => [[x.label]])

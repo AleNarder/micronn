@@ -373,14 +373,14 @@ export class Matrix {
         return matrix;
     }
 
-    isEqual(other: Matrix): boolean {
+    isEqual(other: Matrix, tolerance: number = 0.0): boolean {
         if (this.rows_ !== other.rows_ || this.cols_ !== other.cols_) {
             return false;
         }
 
         for (let i = 0; i < this.rows_; i++) {
             for (let j = 0; j < this.cols_; j++) {
-                if (this.get(i, j) !== other.get(i, j)) {
+                if (Math.abs(this.get(i, j) - other.get(i, j)) > tolerance) {
                     return false;
                 }
             }

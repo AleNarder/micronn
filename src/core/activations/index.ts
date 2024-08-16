@@ -67,6 +67,41 @@ export class ReLuActivation extends Activation {
     }
 }
 
+/**
+ * Leaky ReLU activation function
+ * Leaky ReLU is an attempt to fix the "dying ReLU" problem by allowing a small,
+ * positive gradient when the input is negative
+ * 
+ * @see https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
+ */
+export class LeakyReLuActivation extends Activation {
+
+    public alpha_: number;
+
+    constructor(alpha: number) {
+        super();
+        this.alpha_ = alpha;
+    }
+
+    forward(input: Vector): Vector {
+        const output = new Vector(input.size);
+        for (let i = 0; i < input.size; i++) {
+            output.set(i, Math.max(this.alpha_ * input.get(i), input.get(i)));
+        }
+        return output;
+    }
+
+    backward(input: Vector): Vector {
+        const gradient = new Vector(input.size);
+        for (let i = 0; i < input.size; i++) {
+            gradient.set(i, input.get(i) > 0 ? 1 : this.alpha_);
+        }
+        return gradient;
+    }
+}
+
+
+
 
 /**
  * Sigmoid activation function, it squashes 

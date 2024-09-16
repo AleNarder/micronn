@@ -21,48 +21,27 @@ export class MeanSquaredError extends Loss {
     }
 }
 
-// /**
-//  * Cross Entropy loss function
-//  * @see https://en.wikipedia.org/wiki/Cross_entropy
-//  */
-// export class CrossEntropy extends Loss {
-//     forward(yTrue: Matrix, yPred: Matrix) {
-//         // Avoid log(0)
-//         const yPredClipped = yPred.apply(x => x.apply((x) => Math.max(x, EPSILON)));
-//         return yTrue
-//             .mul(yPredClipped.apply(x => x.log()))
-//             .apply(x => x.sum())
-//             .mul(-1 / yTrue.rows_);
-//     }
-
-//     backward(yTrue: Matrix, yPred: Matrix) {
-//         return yTrue
-//             .div(yPred)
-//             .mul(-1 / yTrue.cols_);
-//     }
-// }
-
 /**
- * Binary Cross Entropy loss function
+ * Cross Entropy loss function
  * @see https://en.wikipedia.org/wiki/Cross_entropy
  */
-export class BinaryCrossEntropy extends Loss {
+export class CrossEntropy extends Loss {
     forward(yTrue: Matrix, yPred: Matrix) {
-        // Avoid log(0)
-        const yPredClipped = yPred.clip(EPSILON, Number.MAX_VALUE);
-        return yTrue.mul(yPredClipped.apply(x => x.log())).add(
-            (yTrue.mul(-1).add(1)).mul(yPredClipped.mul(-1).add(1))
-        ).sum() / yTrue.rows_ * -1;
+        const err =  yTrue
+            .mul(yPred.apply(x => x.log()))
+            .sum() * -1 / yTrue.rows_;
+    
+        return err;
     }
 
     backward(yTrue: Matrix, yPred: Matrix) {
+        // Avoid division by zero
         const yPredClipped = yPred.clip(EPSILON, Number.MAX_VALUE);
-
-        const n = yTrue.div(yPredClipped);
-        const d1 = yTrue.mul(-1).add(1)
-        const d2 = yPredClipped.mul(-1).add(1).clip(EPSILON, Number.MAX_VALUE);
-        const d = d1.div(d2);
-        return n.sub(d).mul(-1)
+        const back =  yTrue
+            .div(yPredClipped)
+            .mul(-1 / yTrue.rows_);
+       
+        return back;
     }
 }
 
@@ -71,6 +50,5 @@ export * from './base';
 // TODO: lazy load
 export const losses = {
     mse: new MeanSquaredError(),
-    // crossentropy: new CrossEntropy(),
-    bce: new BinaryCrossEntropy(),
+    crossentropy: new CrossEntropy(),
 };

@@ -1,3 +1,4 @@
+import { bind } from "../../lib";
 import { Vector } from "../../lib/linalg";
 import { Activation } from "./base";
 
@@ -61,7 +62,7 @@ export class ReLuActivation extends Activation {
     backward(input: Vector): Vector {
         const gradient = new Vector(input.size);
         for (let i = 0; i < input.size; i++) {
-            gradient.set(i, input.get(i) > 0 ? input.get(i) : 0);
+            gradient.set(i, input.get(i) > 0 ? 1 : 0);
         }
         return gradient;
     }
@@ -99,8 +100,6 @@ export class LeakyReLuActivation extends Activation {
         return gradient;
     }
 }
-
-
 
 
 /**
@@ -159,9 +158,11 @@ export class TanhActivation extends Activation {
 export class SoftmaxActivation extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
+        const maxInput = input.max();
         let sum = 0;
         for (let i = 0; i < input.size; i++) {
-            output.set(i, Math.exp(input.get(i)));
+            // Subtract the maximum value to avoid overflow
+            output.set(i, Math.exp(input.get(i) - maxInput));
             sum += output.get(i);
         }
         for (let i = 0; i < input.size; i++) {
@@ -170,15 +171,22 @@ export class SoftmaxActivation extends Activation {
         return output;
     }
 
+    @bind
     backward(input: Vector): Vector {
         const gradient = new Vector(input.size);
+        const softmax = this.forward(input);
+        
+        // Compute the gradient of the softmax activation
         for (let i = 0; i < input.size; i++) {
-            let sum = 0;
+            let grad = 0;
             for (let j = 0; j < input.size; j++) {
-                sum += Math.exp(input.get(j));
+                if (i === j) {
+                    grad += softmax.get(i) * (1 - softmax.get(i));
+                } else {
+                    grad -= softmax.get(i) * softmax.get(j);
+                }
             }
-            let softmax = Math.exp(input.get(i)) / sum;
-            gradient.set(i, softmax * (1 - softmax));
+            gradient.set(i, grad);
         }
         return gradient;
     }

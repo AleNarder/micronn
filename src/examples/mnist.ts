@@ -1,4 +1,4 @@
-import { SoftmaxActivation, TanhActivation } from '../core/activations';
+import { ReLuActivation, SoftmaxActivation, TanhActivation } from '../core/activations';
 import { ActivationLayer, DenseLayer } from '../core/layers';
 import { FeedForwardNetwork } from '../core/networks';
 import { JSONLoader } from '../lib';
@@ -23,23 +23,23 @@ const test    = data.slice(Math.floor(data.length * SPLIT_SIZE), Math.floor(data
 const testXs  = test.map((x: any) => [x.image.map((x: number) => x / 255)])
 const testYs  = test.map((x: any) => [
     // Perform one-hot encoding
-    new Array(10).fill(0).map((_, idx) => x.label == idx ? 1 : 0)
+    new Array(10).fill(0).map((_, idx) => Number(x.label === idx))
 ])
 
 console.log("extracted test data")
 
 const net = new FeedForwardNetwork()
 
-net.add(new DenseLayer(28 * 28, 100))
-net.add(new ActivationLayer(new TanhActivation()))
-net.add(new DenseLayer(100, 50))
-net.add(new ActivationLayer(new TanhActivation()))
-net.add(new DenseLayer(50, 10))
+net.add(new DenseLayer(28 * 28, 128))
+net.add(new ActivationLayer(new ReLuActivation()))
+net.add(new DenseLayer(128, 64))
+net.add(new ActivationLayer(new ReLuActivation()))
+net.add(new DenseLayer(64, 10))
 net.add(new ActivationLayer(new SoftmaxActivation()))
 
-net.use('mse')
+net.use('crossentropy')
 
-net.fit(trainXs, trainYs, 0.1, 0.1, 20)
+net.fit(trainXs, trainYs, 0.1, 100)
 console.log("training completed\n")
 
 console.log("accuracy:", net.accuracy(testXs, testYs))

@@ -50,10 +50,10 @@ export class FeedForwardNetwork extends Network {
      * @param error - the error gradient
      * @param lr -learning rate 
      */
-    backward(error: Matrix, lr: number, momentum: number) {
+    backward(error: Matrix, lr: number) {
         let gradient = error;
         for (let i = this.layers_.length - 1; i >= 0; i--) {
-            gradient = this.layers_[i].backward(gradient, lr, momentum);
+            gradient = this.layers_[i].backward(gradient, lr);
         }
         return gradient;
     }
@@ -65,7 +65,7 @@ export class FeedForwardNetwork extends Network {
      * @param lr - learning rate
      * @param epochs - number of epochs
      */
-    fit(X: Array<Batch>, y: Array<Batch>, lr: number, momentum: number, epochs: number) {
+    fit(X: Array<Batch>, y: Array<Batch>, lr: number, epochs: number) {
         console.log('training with', X.length, 'samples');
         try {
 
@@ -84,7 +84,7 @@ export class FeedForwardNetwork extends Network {
                     error += this._loss.forward(target, output);
 
                     const err = this._loss.backward(output, target);
-                    this.backward(err, lr, momentum);
+                    this.backward(err, lr);
                 }
 
                 const hrError = error / X.length;

@@ -44,16 +44,12 @@ export class DenseLayer extends Layer {
     }
     
     @bind
-    backward(outputGradient: Matrix, lr: number, momentum: number): Matrix {
+    backward(outputGradient: Matrix, lr: number): Matrix {
         const inputGradient = outputGradient.dot(this._weights.T());
         const weightsError  = this._input.T().dot(outputGradient);
 
-        // Update velocity terms
-        this._velocityWeights = this._velocityWeights.mul(momentum).sub(weightsError.mul(lr));
-        this._velocityBiases  = this._velocityBiases.mul(momentum).sub(outputGradient.mul(lr));
-
-        this._weights = this._weights.add(this._velocityWeights);
-        this._biases  = this._biases.add(this._velocityBiases);
+        this._weights = this._weights.sub(weightsError.mul(lr));
+        this._biases  = this._biases.sub(outputGradient.mul(lr));
 
         return inputGradient;
     }

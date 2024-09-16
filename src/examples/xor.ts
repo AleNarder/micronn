@@ -24,7 +24,7 @@ net.add(new ActivationLayer(
 ))
 
 net.use('mse');
-net.fit(trainXs, trainYs, 0.1, 0.1, 400);
+net.fit(trainXs, trainYs, 0.1, 400);
 console.log("training completed\n");
 
 

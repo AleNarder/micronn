@@ -7,7 +7,7 @@ import { JSONLoader } from '../lib';
 import { TanhActivation } from '../core/activations';
 import { resolve } from 'path';
 
-const data = JSONLoader.load<{ value: number[], label: number}>(resolve(__dirname, '..', '..', 'datasets', 'xor.json'))
+const data = JSONLoader.load<{ value: number[], label: number }>(resolve(__dirname, '..', '..', 'datasets', 'xor.json'))
 
 const trainXs = data.map((x: any) => [x.value])
 const trainYs = data.map((x: any) => [[x.label]])
@@ -24,8 +24,8 @@ net.add(new ActivationLayer(
 ))
 
 net.use('mse');
-net.fit(trainXs, trainYs, 0.1, 400);
-console.log("training completed\n");
+net.fit(trainXs, trainYs, 0.1, 350);
+
 
 
 net.predict(trainXs).forEach((x, idx) => {

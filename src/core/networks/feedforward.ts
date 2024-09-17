@@ -1,5 +1,6 @@
 import { Matrix } from "../../lib/linalg";
-import { Layer } from "../layers";
+import { SoftmaxActivation } from "../activations";
+import { ActivationLayer, Layer } from "../layers";
 import { losses } from "../losses";
 import { Loss } from "../losses";
 import { Batch, Network } from "./base";
@@ -30,7 +31,15 @@ export class FeedForwardNetwork extends Network {
      * @param loss - the loss function to use
      */
     use(loss: keyof typeof losses) {
+
+        const lastLayer = this.layers_[this.layers_.length - 1] as ActivationLayer;
+        if (lastLayer.activation_ instanceof SoftmaxActivation && loss !== 'crossentropy') {
+            throw new Error('Softmax layer requires crossentropy loss');
+        }
+        
         this._loss = losses[loss];
+        
+        
     }
 
     /**
@@ -67,6 +76,7 @@ export class FeedForwardNetwork extends Network {
      */
     fit(X: Array<Batch>, y: Array<Batch>, lr: number, epochs: number) {
         console.log('training with', X.length, 'samples');
+        console.log('===========================')
         try {
 
             const Xm = X.map(x => Matrix.fromArray(x));
@@ -81,15 +91,17 @@ export class FeedForwardNetwork extends Network {
                     const target = ym[i];
                     const output = this.forward(input);
 
-                    error += this._loss.forward(target, output);
+                    error += this._loss.forward(output, target);
 
                     const err = this._loss.backward(output, target);
                     this.backward(err, lr);
                 }
 
                 const hrError = error / X.length;
-                console.log(`Epoch ${epoch + 1}/${epochs}`, 'error', hrError);
+                console.log(`[${epoch + 1}/${epochs}]:`, hrError);
             }
+            console.log('===========================')
+            console.log("training completed\n");
 
         } catch (e) {
             if (e instanceof Error) {

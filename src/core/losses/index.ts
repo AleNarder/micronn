@@ -26,21 +26,19 @@ export class MeanSquaredError extends Loss {
  * @see https://en.wikipedia.org/wiki/Cross_entropy
  */
 export class CrossEntropy extends Loss {
-    forward(yTrue: Matrix, yPred: Matrix) {
+    forward(yPred: Matrix, yTrue: Matrix) {
         const err =  yTrue
             .mul(yPred.apply(x => x.log()))
             .sum() * -1 / yTrue.rows_;
-    
+ 
         return err;
     }
 
-    backward(yTrue: Matrix, yPred: Matrix) {
+    backward(yPred: Matrix, yTrue: Matrix) {
         // Avoid division by zero
-        const yPredClipped = yPred.clip(EPSILON, Number.MAX_VALUE);
-        const back =  yTrue
-            .div(yPredClipped)
-            .mul(-1 / yTrue.rows_);
-       
+        const back =  yPred
+            .sub(yTrue)
+            .mul(1 / yTrue.rows_);
         return back;
     }
 }

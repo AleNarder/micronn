@@ -158,11 +158,9 @@ export class TanhActivation extends Activation {
 export class SoftmaxActivation extends Activation {
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
-        const maxInput = input.max();
         let sum = 0;
         for (let i = 0; i < input.size; i++) {
-            // Subtract the maximum value to avoid overflow
-            output.set(i, Math.exp(input.get(i) - maxInput));
+            output.set(i, Math.exp(input.get(i)));
             sum += output.get(i);
         }
         for (let i = 0; i < input.size; i++) {
@@ -171,24 +169,18 @@ export class SoftmaxActivation extends Activation {
         return output;
     }
 
+    /**
+     * Softmax backward pass, currently only supports cross entropy loss
+     * @param input 
+     * @param yTrue 
+     * @returns 
+     */
     @bind
-    backward(input: Vector): Vector {
-        const gradient = new Vector(input.size);
+    backward(input: Vector, yTrue: Vector): Vector {
         const softmax = this.forward(input);
+        const gradient = softmax.sub(yTrue);
+        return gradient
         
-        // Compute the gradient of the softmax activation
-        for (let i = 0; i < input.size; i++) {
-            let grad = 0;
-            for (let j = 0; j < input.size; j++) {
-                if (i === j) {
-                    grad += softmax.get(i) * (1 - softmax.get(i));
-                } else {
-                    grad -= softmax.get(i) * softmax.get(j);
-                }
-            }
-            gradient.set(i, grad);
-        }
-        return gradient;
     }
 }
 

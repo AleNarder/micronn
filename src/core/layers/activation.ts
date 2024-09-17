@@ -1,5 +1,5 @@
 import { bind } from "../../lib/decorators/bind";
-import { Matrix } from "../../lib/linalg";
+import { Matrix, Vector } from "../../lib/linalg";
 import { Activation } from "../activations/base";
 import { Layer } from "./base";
 
@@ -26,7 +26,9 @@ export class ActivationLayer extends Layer{
     
     @bind
     backward(outputGradient: Matrix): Matrix {
-        const out = this._input.apply(this.activation_.backward).mul(outputGradient);
+        // TODO: implement with gradient descent
+        const outputGradientVec = Vector.fromMatrix(outputGradient);
+        const out = this._input.apply((v)=>this.activation_.backward(v, outputGradientVec)).mul(outputGradient);
         return out;
     }
 

@@ -27,6 +27,27 @@ export class Matrix {
         }
         return matrix;
     }
+
+    public static isSafe (matrix: Matrix) {
+        const values = matrix.toArray().flat();
+
+        const hasNaN = values.some(value => isNaN(value));
+        const hasOverflow = values.some(value => value > Number.MAX_VALUE / 2);
+        const hasUnderflow = values.some(value => value < -Number.MAX_VALUE / 2);
+
+        if (hasNaN) {
+            console.log('Matrix has NaN values');
+        }
+        if (hasOverflow) {
+            console.log('Matrix has overflow values');
+        }
+        if (hasUnderflow) {
+            console.log('Matrix has underflow values');
+        }
+
+        return !hasNaN && !hasOverflow && !hasUnderflow;
+    }
+
     // <<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -85,7 +106,7 @@ export class Matrix {
     /**
      * Apply a function to each row or column
      * @param fn - the function to apply
-     * @param byRow - if true, apply the function to each row, otherwise apply to each column
+     * @param byRow- if false, apply the function to each column, otherwise apply to each row
      * @returns - a new matrix
      */
     @bind

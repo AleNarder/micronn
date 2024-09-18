@@ -12,6 +12,7 @@ export abstract class Layer implements Layerable {
     abstract forward(input: Matrix): Matrix;
     abstract backward(outputError: Matrix, lr: number): Matrix;
 
+
     setLabel(label: string): void {
         this._label = label;
     }
@@ -19,4 +20,5 @@ export abstract class Layer implements Layerable {
     getLabel(): string {
         return this._label;
     }
+
 }

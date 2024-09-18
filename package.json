@@ -10,7 +10,8 @@
   "scripts": {
     "test": "jest",
     "xor": "ts-node src/examples/xor.ts",
-    "clusters": "ts-node src/examples/clusters.ts"
+    "clusters": "ts-node src/examples/clusters.ts",
+    "mnist": "ts-node src/examples/mnist.ts"
   },
   "author": "Alessio Narder",
   "license": "MIT",

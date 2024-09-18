@@ -19,6 +19,11 @@ export class ActivationLayer extends Layer{
     
     @bind
     forward(input: Matrix): Matrix {
+
+        if (!Matrix.isSafe(input)) {
+            throw new Error('Unsafe matrix: \n' + input.toArray() + '\n');
+        }
+
         this._input = input;
         const out = input.apply(this.activation_.forward);
         return out;
@@ -26,6 +31,11 @@ export class ActivationLayer extends Layer{
     
     @bind
     backward(outputGradient: Matrix): Matrix {
+
+        if (!Matrix.isSafe(outputGradient)) {
+            throw new Error('Unsafe matrix' + outputGradient.toArray());
+        }
+
         // TODO: implement with gradient descent
         const outputGradientVec = Vector.fromMatrix(outputGradient);
         const out = this._input.apply((v)=>this.activation_.backward(v, outputGradientVec)).mul(outputGradient);

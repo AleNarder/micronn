@@ -4,7 +4,7 @@ import { FeedForwardNetwork } from '../core/networks/feedforward';
 import { DenseLayer } from '../core/layers/dense';
 import { ActivationLayer } from '../core/layers/activation';
 import { JSONLoader } from '../lib';
-import { TanhActivation } from '../core/activations';
+import { ReLuActivation, TanhActivation } from '../core/activations';
 import { resolve } from 'path';
 
 const data = JSONLoader.load<{ value: number[], label: number }>(resolve(__dirname, '..', '..', 'datasets', 'xor.json'))
@@ -16,7 +16,7 @@ const trainYs = data.map((x: any) => [[x.label]])
 const net = new FeedForwardNetwork();
 net.add(new DenseLayer(2, 9))
 net.add(new ActivationLayer(
-    new TanhActivation()
+new ReLuActivation()
 ))
 net.add(new DenseLayer(9, 1))
 net.add(new ActivationLayer(
@@ -24,12 +24,8 @@ net.add(new ActivationLayer(
 ))
 
 net.use('mse');
-net.fit(trainXs, trainYs, 0.1, 350);
+net.fit(trainXs, trainYs, 0.1, 200);
 
+net.accuracy(trainXs, trainYs, 0.05)
 
-
-net.predict(trainXs).forEach((x, idx) => {
-    console.log(`Prediction for ${trainXs[idx]} is ${x.toArray()}`);
-});
-
-console.log("\naccuracy:", net.accuracy(trainXs, trainYs, 0.05));
+net.dumpReport()

@@ -29,7 +29,7 @@ export class CrossEntropy extends Loss {
     forward(yPred: Matrix, yTrue: Matrix) {
         const err =  yTrue
             .mul(yPred.apply(x => x.log()))
-            .sum() * -1 / yTrue.rows_;
+            .sum()* -1 / yTrue.rows_;
  
         return err;
     }
@@ -38,7 +38,7 @@ export class CrossEntropy extends Loss {
         // Avoid division by zero
         const back =  yPred
             .sub(yTrue)
-            .mul(1 / yTrue.rows_);
+            .div(yTrue.rows_);
         return back;
     }
 }

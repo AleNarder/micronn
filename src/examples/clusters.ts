@@ -6,7 +6,7 @@ import { resolve } from 'path';
 
 // Load the MNIST dataset
 // Slice the dataset to reduce the training time
-const data = JSONLoader.load<{ data: number[], label: number}>(resolve(__dirname, '..', '..', 'datasets', 'clusters.json'))
+const data = JSONLoader.load<{ data: number[], label: number}>(resolve(__dirname, '..', '..', 'datasets', 'clusters_3.json'))
 
 const SPLIT_SIZE = 0.9
 // Normalize the data
@@ -30,16 +30,16 @@ console.log("extracted test data")
 
 const net = new FeedForwardNetwork()
 
-net.add(new DenseLayer(3, 16))
+net.add(new DenseLayer(3, 18))
+net.add(new ActivationLayer(new ReLuActivation()))
+net.add(new DenseLayer(18, 12))
 net.add(new ActivationLayer(new TanhActivation()))
-net.add(new DenseLayer(16, 8))
-net.add(new ActivationLayer(new TanhActivation()))
-net.add(new DenseLayer(8, 3))
+net.add(new DenseLayer(12, 3))
 net.add(new ActivationLayer(new SoftmaxActivation()))
+net.use('crossentropy')
 
-net.use('mse')
+net.fit(trainXs, trainYs, 0.001, 300)
 
-net.fit(trainXs, trainYs, 0.1, 10000)
-console.log("training completed\n")
+net.accuracy(testXs, testYs, 0.01)
 
-console.log("accuracy:", net.accuracy(testXs, testYs))
+net.dumpReport()

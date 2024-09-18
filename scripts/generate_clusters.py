@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Generate points from 3 Gaussian blobs
-centers = [(0, 0, 0), (3, 3, 3), (-3, -3, -3)]  # Centers of the Gaussians
+centers = [(0, 0, 0), (2, 2, 2), (-2, -2, -2)]  # Centers of the Gaussians
 n_samples = 1000  # Total number of samples
-cluster_std = [0.5, 0.75, 0.6]  # Standard deviation for each Gaussian
+cluster_std = [0.75, 0.95, 0.85]  # Standard deviation for each Gaussian
 
 # Use make_blobs to generate the 3D points
 X, labels = make_blobs(n_samples=n_samples, centers=centers, cluster_std=cluster_std, n_features=3, random_state=42)
@@ -33,5 +33,5 @@ for x, label in zip(X, labels):
         "label" : int(label)
 })
 
-json.dump(dataset, open("data.json", "w"))
+json.dump(dataset, open("clusters.json", "w"))
     

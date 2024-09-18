@@ -4,12 +4,14 @@ import { ActivationLayer, Layer } from "../layers";
 import { losses } from "../losses";
 import { Loss } from "../losses";
 import { Batch, Network } from "./base";
-
+import { writeFileSync } from 'fs';
 
 export class FeedForwardNetwork extends Network {
 
     readonly layers_: Layer[];
     private _loss: Loss;
+    private _losses: number[] = [];
+    private _training_time: number = 0;
 
     constructor() {
         super();
@@ -77,6 +79,8 @@ export class FeedForwardNetwork extends Network {
     fit(X: Array<Batch>, y: Array<Batch>, lr: number, epochs: number) {
         console.log('training with', X.length, 'samples');
         console.log('===========================')
+        const start = Date.now();
+
         try {
 
             const Xm = X.map(x => Matrix.fromArray(x));
@@ -99,9 +103,13 @@ export class FeedForwardNetwork extends Network {
 
                 const hrError = error / X.length;
                 console.log(`[${epoch + 1}/${epochs}]:`, hrError);
+                this._losses.push(hrError);
             }
+            const end = Date.now();
+            this._training_time = end - start;
+
             console.log('===========================')
-            console.log("training completed\n");
+            console.log("training completed in " + this._training_time + "ms" + "\n");
 
         } catch (e) {
             if (e instanceof Error) {
@@ -118,6 +126,7 @@ export class FeedForwardNetwork extends Network {
      * @param X - the input data
      */
     predict(Xs: Array<Batch>) {
+        console.log(Xs)
         const Xm = Xs.map(x => Matrix.fromArray(x));
         return Xm.map(v => this.forward(v));
     }
@@ -131,18 +140,42 @@ export class FeedForwardNetwork extends Network {
         const Xm = X.map(x => Matrix.fromArray(x));
         const ym = y.map(y => Matrix.fromArray(y));
 
+        const report = new Array<{ input: number[][], target: number[][], output: number[][] }>(4);
+        
         let correct = 0;
         for (let i = 0; i < X.length; i++) {
             const input  = Xm[i];
             const target = ym[i];
             const output = this.forward(input);
 
+            if (i < report.length) {
+                report[i] = ({
+                    input: input.toArray(),
+                    target: target.toArray(),
+                    output: output.toArray()
+                })
+            }
+
             if (output.isEqual(target, tolerance)) {
                 correct++;
             }
         }
 
+        console.log('===========================')
+        console.log(`Accuracy (${tolerance} tol):`, correct / X.length);
+        console.log('===========================')
+        console.log('Sample report')
+        for (const r of report) {
+            console.log('predicted:', r.output[0].map(e => parseFloat(e.toFixed(3))), 'true:', r.target[0]);
+        }
+
         return correct / X.length;
+    }
+
+    dumpReport() {
+        // Create a json file
+        const data = JSON.stringify(this._losses);
+        writeFileSync('losses.json', data);
     }
 
 }

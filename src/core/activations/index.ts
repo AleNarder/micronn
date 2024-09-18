@@ -2,21 +2,6 @@ import { bind } from "../../lib";
 import { Vector } from "../../lib/linalg";
 import { Activation } from "./base";
 
-/**
- * Linear activation function (identity function)
- * @see https://en.wikipedia.org/wiki/Activation_function
- */
-export class LinearActivation extends Activation {
-    forward(input: Vector): Vector {
-        return input;
-    }
-
-    backward(input: Vector): Vector {
-        // outputGradient.mul(1)
-        return input;
-    }
-}
-
 // Not very useful, but it's here for completeness
 export class BinaryStepActivation extends Activation {
 
@@ -156,16 +141,23 @@ export class TanhActivation extends Activation {
  * @see https://en.wikipedia.org/wiki/Softmax_function
  */
 export class SoftmaxActivation extends Activation {
+    
+
     forward(input: Vector): Vector {
         const output = new Vector(input.size);
+
         let sum = 0;
         for (let i = 0; i < input.size; i++) {
-            output.set(i, Math.exp(input.get(i)));
-            sum += output.get(i);
+            const expValue = Math.exp(input.get(i));
+            output.set(i, expValue);
+            sum += expValue;
         }
+    
+        // Normalize
         for (let i = 0; i < input.size; i++) {
             output.set(i, output.get(i) / sum);
         }
+
         return output;
     }
 
@@ -180,7 +172,6 @@ export class SoftmaxActivation extends Activation {
         const softmax = this.forward(input);
         const gradient = softmax.sub(yTrue);
         return gradient
-        
     }
 }
 

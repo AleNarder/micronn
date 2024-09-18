@@ -27,6 +27,17 @@ export class Vector{
         v.set(0, scalar);
         return v;
     }
+
+
+    public static isSafe (matrix: Vector) {
+        const values = matrix.toArray();
+
+        const hasNaN = values.some(value => isNaN(value));
+        const hasOverflow = values.some(value => value > Number.MAX_VALUE / 2);
+        const hasUnderflow = values.some(value => value < Number.MIN_VALUE / 2);
+
+        return !hasNaN && !hasOverflow && !hasUnderflow;
+    }
     // <<<<<<<<<<<<<<<<<<<<<<
     
     // >>>>>>>>>>>>>>>>>>>>>>
